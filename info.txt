@@ -1,0 +1,4 @@
+vagrant init ubuntu/trusty32
+
+
+vagrant up ubuntu/trusty32 --provider virtualbox

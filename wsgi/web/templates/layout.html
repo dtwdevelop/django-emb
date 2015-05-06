@@ -1,0 +1,341 @@
+<html lang="{{LANGUAGE_CODE}}">
+<head>
+{% load i18n %}
+{% load staticfiles %}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">		
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="{% static 'bootstrap-3.2.0/css/bootstrap.min.css' %}">
+<!-- Optional theme -->
+<link rel="stylesheet" href="{% static 'bootstrap-3.2.0/css/bootstrap-theme.min.css'%}">
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'fancybox/jquery.fancybox.css' %}" type="text/css" media="screen" />
+
+<!-- Latest compiled and minified JavaScript -->
+<!--[if lt chrome] -->
+<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>-->
+
+<!--[endif]-->  
+
+ 
+
+<title>{% block titile%} {% endblock %}</title>
+</head>
+	<body>
+	
+<script type="text/x-handlebars" data-template-name="navigation-bar">
+  <nav class=" navbar-fixed-top navbar-collapse navbar-inverse panel-bg"  role="navigation">
+	<div class="container-fluid ">		
+<div class="navbar-header ">
+	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url "home" %}"><img style="min-height: 100px;max-width:100px; margin-top: -40px;" src="{% static 'images/logo.png' %}">
+      	</a>
+      </div>
+      {% verbatim %}
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-left white ">
+				<li>{{link-to 'News' 'index'    }}</li>
+				
+				<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Category <span class="caret"></span></a>
+          <ul class="dropdown-menu m-menu" role="menu white">
+          	{{#each list in  menu}}
+				<li >{{link-to list.title_category 'pages' list.id  role="presentation" role="menuitem" tabindex="-1"  }}</li>
+				{{/each}}
+          	</ul>
+          	</li>
+          	<li>{{link-to 'Gallery' 'gallery'    }}</li>
+          	  
+                <li>{{link-to 'Profile' 'index'    }}</li>
+				<li >{{link-to 'Contact' 'contact'    }}</li>
+				
+</ul>
+
+			</div>
+			 {% endverbatim %}
+		</div>
+</div>			
+		</nav>
+</script>
+
+<!-- application -->
+{% verbatim %}
+<script type="text/x-handlebars"  >
+	
+	 {{render "navigation-bar" menu}}
+	 
+	<div class="container-fluid">
+  	<div class="row">
+  		<div class="col-md-3 ">
+  		 {{render "last-news"}}
+  		  {{render "profile"}}
+  		</div>
+  		
+ <div class="col-md-6 push-left">
+ 	
+ {{outlet}}
+
+ {% endverbatim %}
+ </div>
+ 	<div class="col-md-3">
+ 		
+ 		
+ 		</div>
+		</div>
+	</div>
+</script>
+ 
+
+
+		
+	
+	
+		{% include "footer.html" %}
+	
+{% verbatim %}
+
+<script type="text/x-handlebars" data-template-name="index">
+ <div>
+<button class="btn btn-default" {{action 'sort' 'title_category'}}><i class="glyphicon glyphicon-resize-vertical"></i>Names</button>
+    <button class="btn btn-default" {{action 'sort' 'pub_date'}}><i class="glyphicon glyphicon-resize-vertical"></i>By Date</button>
+    
+    <i class="glyphicon glyphicon-search"></i>{{input  action="in" value=filter placeholder='Search'}}
+    
+    <h3 class="alert alert-orange">News</h3>
+    
+    {{#each  filteredContent }}
+    
+    <div class="panel ">
+  <div class="panel-heading panel-bg2">
+    <h3 class="panel-title">{{title}}</h3>
+  </div>
+  <div class="panel-body">
+   {{post}}
+  </div>
+   <div class="panel-footer ">
+   	{{ printdate pub_date }}<div class="push-right">{{#link-to 'page' this }}more ..{{/link-to}}</div>
+   	</div>
+</div>
+   
+    
+ 
+ 
+{{/each}}
+ 
+</div>
+  </script>
+  <!-- pages -->
+  <script type="text/x-handlebars" data-template-name="pages">
+ <div>
+
+   
+   
+    <h3 class="alert alert-orange">News {{model.id}}</h3>
+    
+    {{#each  page in model.pages }}
+    
+    <div class="panel ">
+  <div class="panel-heading panel-bg2">
+    <h3 class="panel-title">{{page.title}}</h3>
+  </div>
+  <div class="panel-body">
+   {{page.post}}
+  </div>
+   <div class="panel-footer">
+   	{{ printdate page.pub_date }}<div class="push-right">{{#link-to 'page' page.id}}more ..{{/link-to}}</div>
+   	</div>
+</div>
+   
+{{/each}}
+ 
+</div>
+  </script>
+  <!-- gallery -->
+   <script type="text/x-handlebars" data-template-name="gallery">
+ <div>
+
+    {{log model}}
+   
+    
+    
+    {{#each  page in model }}
+    
+    <div class="panel panel-default">
+ 
+  <div class="panel-body">
+  	<a class="pull-left bfoto" rel="group" {{bindAttr href=page.avatar class="bfoto"}} >
+   <img class="img-rounded" {{bindAttr src=page.avatar alt=page.title }}  width="400"/>
+   </a>
+  </div>
+   <div class="panel-footer">
+   	<div class="push-right">{{#link-to 'index' }}Back{{/link-to}}</div>
+   	</div>
+</div>
+   
+{{/each}}
+ 
+</div>
+  </script>
+  <!-- profile -->
+   <script type="text/x-handlebars" data-template-name="profile">
+ <div>
+<div class="panel-heading panel-bg2">
+    <h3 class="panel-title"><i class="glyphicon glyphicon-user"></i> Profile</h3>
+  </div>
+  <div class="panel-body">
+ {{#if infodata}}
+ <div class="alert alert-danger" role="alert">{{infodata}}</div>
+ {{/if}}
+   {{#if user}}
+   <h3>Welcome</h3>
+   {{else}}
+      <form {{action "login" on="submit"}}>
+ 
+  <div class="form-group">
+    <label for="name">Login</label>
+  {{input  min="4" max="200" required="required" type="text" value=login class="form-control" id="name" placeholder="Name"  }}
+  
+  </div>
+   <div class="form-group">
+    <label for="name">Password</label>
+  {{input  min="4" max="200" required="required" type="password" value=pass class="form-control" id="pass" placeholder="Password"  }}
+  
+  </div>
+  <button  class="btn btn-default">Login</button>
+  </div>
+ </div>
+</form>
+</div>
+    {{/if}}
+    
+ </script>
+  <!-- contact -->
+   <script type="text/x-handlebars" data-template-name="contact">
+ <div>
+<div class="panel-heading">
+    <h3 class="alert alert-orange">Contact Just</h3>
+  </div>
+    
+   
+    
+   {{#if info}}
+   <div class="alert alert-info" role="alert">{{info}}</div>
+   {{/if}}
+   
+    <div class="panel panel-default">
+ 
+  <div class="panel-body">
+  
+   <form {{action "send" on="submit"}}>
+ 
+  <div class="form-group">
+    <label for="name">Name</label>
+  {{input  min="4" max="200" required="required" type="text" value=name class="form-control" id="name" placeholder="Name"  }}
+  </div>
+   <div class="form-group">
+    <label for="email">Email</label>
+   
+    {{input  type="email" value=email  required="required"  class="form-control" id="email" placeholder="Enter email" }}
+  </div>
+  
+ 
+  <div class="form-group">
+  	{{textarea required="required" min="4" value=post cols="80" name="post" rows="6"}}
+  </div>
+  <button  class="btn btn-default">Send Contact</button>
+</form>
+  </div>
+   <div class="panel-footer">
+   	<div class="push-right">{{#link-to 'index' }}Back{{/link-to}}</div>
+   	</div>
+</div>
+   
+
+ 
+</div>
+  </script>
+               
+{% endverbatim %}	
+
+{% verbatim %}
+<script type="text/x-handlebars" id="components/comment-form">
+	 <div class="panel panel-default">
+ 
+  <div class="panel-body">
+  
+   <form {{action "send" on="submit"}}>
+ 
+  <div class="form-group">
+    <label for="name">Name</label>
+  {{input  min="4" max="200" required="required" type="text" value=name class="form-control" id="name" placeholder="Name"  }}
+  </div>
+   <div class="form-group">
+    <label for="email">Email</label>
+   
+    {{input  type="email" value=email    class="form-control" id="email" placeholder="Enter email" }}
+  </div>
+  
+ 
+  <div class="form-group">
+  	{{textarea required="required" min="4" value=post cols="80" name="post" rows="6"}}
+  </div>
+  <button  class="btn btn-default">Send Contact</button>
+</form>
+  </div>
+</script>
+<!-- last-new -->
+<script type="text/x-handlebars" data-template-name="last-news">
+ <div class="panel ">
+  <div class="panel-heading panel-bg3">
+    <h3 class="panel-title"><i class="glyphicon glyphicon-bullhorn"></i> &nbsp;Last News</h3>
+  </div>
+  <div class="panel-body">
+  {{#each item in lnews}}
+  <p>{{item.title}}{{#link-to 'page' item.id}} <i class="glyphicon glyphicon-circle-arrow-right"></i>{{/link-to}}</p>
+  {{/each}}
+  </div>
+ 
+</div>
+
+</script>
+
+<script type="text/x-handlebars" data-template-name="page">
+ <div class="panel">
+  <div class="panel-heading panel-bg2">
+    <h3 class="panel-title">{{model.title}}</h3>
+  </div>
+  <div class="panel-body">
+   {{model.topic}}
+  </div>
+   <div class="panel-footer">{{ printdate model.pub_date }}</div>
+</div>
+{{link-to 'Back' 'index'    }}
+
+ {{ comment-form }}
+</script>
+{% endverbatim %}	
+
+    <script src="{% static 'js/jquery-1.11.0.min.js' %}"></script>
+	<script src="{% static 'bootstrap-3.2.0/js/bootstrap.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
+<script type="text/javascript" src="{% static 'ckeditor/adapters/jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'fancybox/jquery.fancybox.js' %}"></script>
+<script src="{% static 'js/lib.js' %}"></script> 
+
+     <script src="{% static 'app/libs/handlebars-v2.0.0.js' %}"></script>
+     <script src="{% static 'app/libs/ember-1.9.1.js' %}"></script>
+     <script src="{% static 'app/libs/ember-data.min2.js' %}"></script>
+     <script src="{% static 'app/libs/ember-data-tastypie-adapter.min.js' %}"></script>
+     
+     <script src="{% static 'app/app.js' %}"></script>
+     <script src="{% static 'app/model.js' %}"></script>
+     <script src="{% static 'app/controller.js' %}"></script>
+     
+    
+	</body>
+</html>

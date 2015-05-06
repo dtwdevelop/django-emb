@@ -1,0 +1,7 @@
+fix admin
+cx
+git rm -r --cached .
+
+ps ax|grep gunicorn and to stop gunicorn_django is pkill gunicorn
+
+pip install django-oauth2-provider
